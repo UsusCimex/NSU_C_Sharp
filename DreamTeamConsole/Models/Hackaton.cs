@@ -2,16 +2,14 @@ namespace DreamTeamConsole.Models
 {
     public class Hackaton
     {
-        public List<TeamLead> TeamLeads { get; }
-        public List<Junior> Juniors { get; }
+        public List<Employee> TeamLeads { get; }
+        public List<Employee> Juniors { get; }
 
         public Hackaton(string teamLeadsCsvPath, string juniorsCsvPath)
         {
-            TeamLeads = CsvLoader.LoadEmployeesFromCsv(teamLeadsCsvPath, (id, name) => new TeamLead(id, name))
-                .Cast<TeamLead>()
+            TeamLeads = CsvLoader.LoadEmployeesFromCsv(teamLeadsCsvPath, (id, name) => new Employee(id, name))
                 .ToList();
-            Juniors = CsvLoader.LoadEmployeesFromCsv(juniorsCsvPath, (id, name) => new Junior(id + 20, name)) // Костыль
-                .Cast<Junior>()
+            Juniors = CsvLoader.LoadEmployeesFromCsv(juniorsCsvPath, (id, name) => new Employee(id + 20, name))
                 .ToList();
 
             if (TeamLeads.Count != Juniors.Count) 
@@ -25,7 +23,7 @@ namespace DreamTeamConsole.Models
             }
         }
 
-        public Hackaton(List<TeamLead> teamLeads, List<Junior> juniors)
+        public Hackaton(List<Employee> teamLeads, List<Employee> juniors)
         {
             TeamLeads = teamLeads;
             Juniors = juniors;

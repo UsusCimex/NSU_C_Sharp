@@ -1,4 +1,5 @@
 ﻿using DreamTeamConsole.Models;
+using DreamTeamConsole.Strategy;
 
 namespace DreamTeamConsole
 {
@@ -17,22 +18,24 @@ namespace DreamTeamConsole
             double harmonicGlobalMean = 0;
             int countIteration = 1000;
             for (int i = 0; i < countIteration; i++) {
-                foreach (TeamLead teamLead in hackaton.TeamLeads) {
-                    Wishlist wishlist = teamLead.GenerateRandomWishlist(hackaton.Juniors.Cast<Employee>().ToList());
-                    teamLead.SendWishlistToHrManager(wishlist, hrManager);
+                foreach (Employee teamLead in hackaton.TeamLeads) {
+                    Wishlist wishlist = teamLead.GenerateWishlist(hackaton.Juniors.Cast<Employee>().ToList());
+                    teamLead.SendWishlistToHrManager(wishlist, "TeamLead", hrManager);
                 }
-                foreach (Junior junior in hackaton.Juniors) {
-                    Wishlist wishlist = junior.GenerateRandomWishlist(hackaton.TeamLeads.Cast<Employee>().ToList());
-                    junior.SendWishlistToHrManager(wishlist, hrManager);
+                foreach (Employee junior in hackaton.Juniors) {
+                    Wishlist wishlist = junior.GenerateWishlist(hackaton.TeamLeads.Cast<Employee>().ToList());
+                    junior.SendWishlistToHrManager(wishlist, "Junior", hrManager);
                 }
                 
-                List<Team> teams = hrManager.GenerateTeams(hackaton); // Hackaton?
+                ITeamBuildingStrategy strategy = new MegaTeamBuildingStrategy();
+                List<Team> teams = hrManager.GenerateTeams(strategy, hackaton);
                 hrManager.SendTeamsToHrDirector(teams, hrDirector);
                 double harmonicMean = hrDirector.CalculateTeamsScore();
 
                 Console.WriteLine($"Harmonic Mean of Satisfaction: {harmonicMean}");
 
                 harmonicGlobalMean += harmonicMean;
+                hrManager.ClearAllWishlists();
             }
             harmonicGlobalMean /= countIteration;
             Console.WriteLine($"Harmonic Global Mean of Satisfaction: {harmonicGlobalMean}");

@@ -1,34 +1,41 @@
+using System.Collections.ObjectModel;
+using DreamTeamConsole.Strategy;
+
 namespace DreamTeamConsole.Models
 {
     public class HrManager
     {
-        private readonly List<Wishlist> receivedWishlists = [];
+        private readonly List<Wishlist> juniorWishlists = [];
+        private readonly List<Wishlist> teamLeadWishlists = [];
 
-        public void ReceiveWishlist(Wishlist wishlist)
+        public void ReceiveWishlist(Wishlist wishlist, string type)
         {
-            receivedWishlists.Add(wishlist);
+            if (type.Equals("Junior")) {
+                juniorWishlists.Add(wishlist);
+            } else {
+                teamLeadWishlists.Add(wishlist);
+            }
         }
 
-        public List<Team> GenerateTeams(Hackaton hackaton)
+        public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, Hackaton hackaton)
         {
-            List<Team> Teams = [];
-            var random = new Random();
-
-            var shuffledJuniors = hackaton.Juniors.OrderBy(i => random.Next()).ToList();
-            var shuffledTeamLeads = hackaton.TeamLeads.OrderBy(i => random.Next()).ToList();
-
-            for (int i = 0; i < shuffledTeamLeads.Count; i++)
-            {
-                // Console.WriteLine($"[LOG] Команда: {shuffledTeamLeads[i].Id} : {shuffledJuniors[i].Id}");
-                Teams.Add(new Team(shuffledTeamLeads[i], shuffledJuniors[i]));
-            }
-            return Teams;
+            return (List<Team>)teamBuildingStrategy.BuildTeams(
+                hackaton.TeamLeads,
+                hackaton.Juniors,
+                teamLeadWishlists,
+                juniorWishlists
+            );
         }
 
         public void SendTeamsToHrDirector(List<Team> teams, HrDirector hrDirector)
         {
-            hrDirector.ReceiveTeamsAndWishlists(new List<Team>(teams), new List<Wishlist>(receivedWishlists));
-            receivedWishlists.Clear();
+            var allWishlists = teamLeadWishlists.Concat(juniorWishlists).ToList();
+            hrDirector.ReceiveTeamsAndWishlists(teams, allWishlists);
+        }
+
+        public void ClearAllWishlists() {
+            juniorWishlists.Clear();
+            teamLeadWishlists.Clear();
         }
     }
 }

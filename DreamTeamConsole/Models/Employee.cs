@@ -1,10 +1,13 @@
 namespace DreamTeamConsole.Models
 {
-    public abstract record Employee(int Id, string Name)
+    public record Employee(int Id, string Name)
     {
-        public abstract List<Employee> GetHackatonList(Hackaton hackaton);
+        public Wishlist GenerateWishlist(IEnumerable<Employee> potentialPartners)
+        {
+            return GenerateRandomWishlist(potentialPartners);
+        }
 
-        public Wishlist GenerateRandomWishlist(List<Employee> potentialPartners)
+        private Wishlist GenerateRandomWishlist(IEnumerable<Employee> potentialPartners)
         {
             var random = new Random();
             var shuffledPartners = potentialPartners
@@ -15,9 +18,9 @@ namespace DreamTeamConsole.Models
             return new Wishlist(Id, shuffledPartners);
         }
 
-        public void SendWishlistToHrManager(Wishlist wishlist, HrManager hrManager) 
+        public void SendWishlistToHrManager(Wishlist wishlist, string type, HrManager hrManager) 
         {
-            hrManager.ReceiveWishlist(new Wishlist(wishlist));
+            hrManager.ReceiveWishlist(wishlist, type);
         }
 
         public override string ToString()

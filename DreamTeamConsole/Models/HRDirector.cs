@@ -4,10 +4,10 @@ namespace DreamTeamConsole.Models
     {
         private List<Team> Teams = [];
         private List<Wishlist> Wishlists = [];
-        public void ReceiveTeamsAndWishlists(List<Team> teams, List<Wishlist> wishlists) 
+        public void ReceiveTeamsAndWishlists(List<Team> teams, IEnumerable<Wishlist> wishlists) 
         {
             Teams = teams;
-            Wishlists = wishlists;
+            Wishlists = (List<Wishlist>)wishlists;
 
             // Console.WriteLine($"[LOG] Received by HrDirector team {teams.Count}, wishlist {wishlists.Count}");
         }
