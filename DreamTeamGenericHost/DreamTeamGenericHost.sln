@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DreamTeamGenericHost", "DreamTeamGenericHost.csproj", "{5409C38B-11D1-41AD-B8D2-49A730A61A3D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5409C38B-11D1-41AD-B8D2-49A730A61A3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5409C38B-11D1-41AD-B8D2-49A730A61A3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5409C38B-11D1-41AD-B8D2-49A730A61A3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5409C38B-11D1-41AD-B8D2-49A730A61A3D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6442021-1DBA-4EA0-A3F4-AFCCA8091B33}
+	EndGlobalSection
+EndGlobal

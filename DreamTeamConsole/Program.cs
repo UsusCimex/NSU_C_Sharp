@@ -7,8 +7,8 @@ namespace DreamTeamConsole
     {
         static void Main(string[] args)
         {
-            string teamLeadsCsvPath = "csvFiles/TeamLeads20.csv";
-            string juniorsCsvPath = "csvFiles/Juniors20.csv";
+            string teamLeadsCsvPath = "../csvFiles/TeamLeads20.csv";
+            string juniorsCsvPath = "../csvFiles/Juniors20.csv";
 
             Hackaton hackaton = new(teamLeadsCsvPath, juniorsCsvPath);
 
