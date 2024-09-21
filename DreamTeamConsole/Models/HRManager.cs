@@ -17,7 +17,7 @@ namespace DreamTeamConsole.Models
             }
         }
 
-        public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, Hackaton hackaton)
+        public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, Hackathon hackaton)
         {
             return (List<Team>)teamBuildingStrategy.BuildTeams(
                 hackaton.TeamLeads,

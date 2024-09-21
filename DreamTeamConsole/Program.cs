@@ -10,7 +10,7 @@ namespace DreamTeamConsole
             string teamLeadsCsvPath = "../csvFiles/TeamLeads20.csv";
             string juniorsCsvPath = "../csvFiles/Juniors20.csv";
 
-            Hackaton hackaton = new(teamLeadsCsvPath, juniorsCsvPath);
+            Hackathon hackathon = new(teamLeadsCsvPath, juniorsCsvPath);
 
             HrManager hrManager = new();
             HrDirector hrDirector = new();
@@ -18,17 +18,17 @@ namespace DreamTeamConsole
             double harmonicGlobalMean = 0;
             int countIteration = 1000;
             for (int i = 0; i < countIteration; i++) {
-                foreach (Employee teamLead in hackaton.TeamLeads) {
-                    Wishlist wishlist = teamLead.GenerateWishlist(hackaton.Juniors.Cast<Employee>().ToList());
+                foreach (Employee teamLead in hackathon.TeamLeads) {
+                    Wishlist wishlist = teamLead.GenerateWishlist(hackathon.Juniors.Cast<Employee>().ToList());
                     teamLead.SendWishlistToHrManager(wishlist, "TeamLead", hrManager);
                 }
-                foreach (Employee junior in hackaton.Juniors) {
-                    Wishlist wishlist = junior.GenerateWishlist(hackaton.TeamLeads.Cast<Employee>().ToList());
+                foreach (Employee junior in hackathon.Juniors) {
+                    Wishlist wishlist = junior.GenerateWishlist(hackathon.TeamLeads.Cast<Employee>().ToList());
                     junior.SendWishlistToHrManager(wishlist, "Junior", hrManager);
                 }
                 
                 ITeamBuildingStrategy strategy = new MegaTeamBuildingStrategy();
-                List<Team> teams = hrManager.GenerateTeams(strategy, hackaton);
+                List<Team> teams = hrManager.GenerateTeams(strategy, hackathon);
                 hrManager.SendTeamsToHrDirector(teams, hrDirector);
                 double harmonicMean = hrDirector.CalculateTeamsScore();
 

@@ -1,11 +1,11 @@
 namespace DreamTeamConsole.Models
 {
-    public class Hackaton
+    public class Hackathon
     {
         public List<Employee> TeamLeads { get; }
         public List<Employee> Juniors { get; }
 
-        public Hackaton(string teamLeadsCsvPath, string juniorsCsvPath)
+        public Hackathon(string teamLeadsCsvPath, string juniorsCsvPath)
         {
             TeamLeads = CsvLoader.LoadEmployeesFromCsv(teamLeadsCsvPath, (id, name) => new Employee(id, name))
                 .ToList();
@@ -23,7 +23,7 @@ namespace DreamTeamConsole.Models
             }
         }
 
-        public Hackaton(List<Employee> teamLeads, List<Employee> juniors)
+        public Hackathon(List<Employee> teamLeads, List<Employee> juniors)
         {
             TeamLeads = teamLeads;
             Juniors = juniors;
