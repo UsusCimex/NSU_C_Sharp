@@ -1,7 +1,4 @@
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using DreamTeamConsole.Models;
 using DreamTeamConsole.Strategy;
 
@@ -25,7 +22,7 @@ namespace DreamTeamGenericHost
         public Task StartAsync(CancellationToken cancellationToken)
         {
             double harmonicGlobalMean = 0;
-            int countIteration = 1000;
+            int countIteration = 100000;
             for (int i = 0; i < countIteration; i++)
             {
                 foreach (Employee teamLead in hackathon.TeamLeads)

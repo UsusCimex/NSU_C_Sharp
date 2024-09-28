@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using DreamTeamConsole.Models;
 using DreamTeamConsole.Strategy;
+using System.Security.Cryptography;
 
 namespace DreamTeamGenericHost
 {
@@ -13,18 +14,19 @@ namespace DreamTeamGenericHost
                 .ConfigureServices((hostContext, services) =>
                 {
                     var configuration = hostContext.Configuration;
-                    string teamLeadsCsvPath = configuration["TeamLeadsCsvPath"];
-                    string juniorsCsvPath = configuration["JuniorsCsvPath"];
+                    string teamLeadsCsvPath = configuration["TeamLeadsCsvPath"] ?? throw new FileLoadException("TeamLeadsCsvPath not found");;
+                    string juniorsCsvPath = configuration["JuniorsCsvPath"] ?? throw new FileLoadException("JuniorsCsvPath not found");
                     
                     services.AddHostedService<HackathonWorker>();
-                    services.AddTransient<Hackathon>(_ => new Hackathon(teamLeadsCsvPath, juniorsCsvPath));
-                    services.AddTransient<ITeamBuildingStrategy, RandomTeamBuildingStrategy>();
-                    services.AddTransient<HrManager>();
+                    services.AddSingleton<Hackathon>(_ => new Hackathon(teamLeadsCsvPath, juniorsCsvPath));
+                    services.AddSingleton<ITeamBuildingStrategy, RandomTeamBuildingStrategy>();
+                    services.AddScoped<HrManager>();
                     services.AddTransient<HrDirector>();
                 })
                 .Build();
-
-            await host.RunAsync();
+            
+            _ = host.RunAsync();
+            await host.StopAsync(); // or new CancellationTokenSource(msDelay).Token
         }
     }
 }
