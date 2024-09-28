@@ -20,7 +20,6 @@ namespace DreamTeamDB
             using var context = serviceProvider.GetRequiredService<HackathonContext>();
             context.Database.EnsureCreated();
 
-
             var teamLeadNames = DreamTeamConsole.Models.CsvLoader.LoadEmployeeNamesFromCsv("../csvFiles/Juniors20.csv");
             var teamLeads = new List<Employee>();
             foreach (var teamLeadName in teamLeadNames) 
