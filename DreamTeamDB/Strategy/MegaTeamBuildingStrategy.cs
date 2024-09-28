@@ -1,7 +1,6 @@
-using DreamTeamConsole.Models;
-using HungarianAlgorithm;
+using DreamTeamDB.Models;
 
-namespace DreamTeamConsole.Strategy 
+namespace DreamTeamDB.Strategy
 {
     public class MegaTeamBuildingStrategy : ITeamBuildingStrategy
     {

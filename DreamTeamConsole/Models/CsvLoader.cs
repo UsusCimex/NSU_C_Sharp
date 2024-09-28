@@ -25,5 +25,26 @@ namespace DreamTeamConsole.Models {
             
             return employees;
         }
+
+        public static List<string> LoadEmployeeNamesFromCsv(string filePath)
+        {
+            List<string> names = [];
+            using (var reader = new StreamReader(filePath))
+            {
+                reader.ReadLine();
+
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line == null) break;
+                    var values = line.Split(';');
+                    
+                    string name = values[1];
+                    names.Add(name);
+                }
+            }
+            
+            return names;
+        }
     }
 }

@@ -7,15 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeam", "DreamTeamConso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeamGenericHost", "DreamTeamGenericHost\DreamTeamGenericHost.csproj", "{46A9BC52-537A-46DD-9DA9-9E7C95206345}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeamConsole.Tests", "DreamTeamConsole.Tests\DreamTeamConsole.Tests.csproj", "{B08E497C-461D-4C1F-B10C-A5D9E92CB844}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeam.Tests", "DreamTeam.Tests\DreamTeam.Tests.csproj", "{B08E497C-461D-4C1F-B10C-A5D9E92CB844}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeamDB", "DreamTeamDB\DreamTeamDB.csproj", "{7275063C-E73C-421A-A773-763D7FA06AED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{28A165DB-B980-4AA0-87A8-C28BAD2A5ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +29,12 @@ Global
 		{B08E497C-461D-4C1F-B10C-A5D9E92CB844}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B08E497C-461D-4C1F-B10C-A5D9E92CB844}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B08E497C-461D-4C1F-B10C-A5D9E92CB844}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7275063C-E73C-421A-A773-763D7FA06AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7275063C-E73C-421A-A773-763D7FA06AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7275063C-E73C-421A-A773-763D7FA06AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7275063C-E73C-421A-A773-763D7FA06AED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

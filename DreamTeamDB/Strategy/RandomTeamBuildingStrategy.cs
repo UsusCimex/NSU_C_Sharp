@@ -1,6 +1,6 @@
-using DreamTeamConsole.Models;
+using DreamTeamDB.Models;
 
-namespace DreamTeamConsole.Strategy 
+namespace DreamTeamDB.Strategy 
 {
     public class RandomTeamBuildingStrategy : ITeamBuildingStrategy
     {
