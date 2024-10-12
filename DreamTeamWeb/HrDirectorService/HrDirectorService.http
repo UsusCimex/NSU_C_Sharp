@@ -1,0 +1,6 @@
+@HrDirectorService_HostAddress = http://localhost:5107
+
+GET {{HrDirectorService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
