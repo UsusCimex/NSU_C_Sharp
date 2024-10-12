@@ -49,7 +49,44 @@ services:
     networks:
       - app-network
 
-  # Repeat for teamlead-3 to teamlead-5
+  teamlead-3:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: teamlead-3
+    environment:
+      - TYPE=teamlead
+      - ID=3
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
+
+  teamlead-4:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: teamlead-4
+    environment:
+      - TYPE=teamlead
+      - ID=4
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
+
+  teamlead-5:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: teamlead-5
+    environment:
+      - TYPE=teamlead
+      - ID=5
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
 
   junior-1:
     build:
@@ -64,7 +101,57 @@ services:
     networks:
       - app-network
 
-  # Repeat for junior-2 to junior-5
+  junior-2:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: junior-2
+    environment:
+      - TYPE=junior
+      - ID=7
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
+
+  junior-3:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: junior-3
+    environment:
+      - TYPE=junior
+      - ID=8
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
+
+  junior-4:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: junior-4
+    environment:
+      - TYPE=junior
+      - ID=9
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
+
+  junior-5:
+    build:
+      context: ./DeveloperService
+      dockerfile: Dockerfile
+    container_name: junior-5
+    environment:
+      - TYPE=junior
+      - ID=10
+    depends_on:
+      - hr-manager-service
+    networks:
+      - app-network
 
 networks:
   app-network:
