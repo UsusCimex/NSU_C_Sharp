@@ -18,65 +18,94 @@ namespace DreamTeamDB
                 .BuildServiceProvider();
 
             using var context = serviceProvider.GetRequiredService<HackathonContext>();
+            // context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            var teamLeadNames = DreamTeamConsole.Models.CsvLoader.LoadEmployeeNamesFromCsv("../csvFiles/Juniors20.csv");
+            var teamLeadNames = DreamTeamConsole.Models.CsvLoader.LoadEmployeeNamesFromCsv("../csvFiles/Teamleads20.csv");
             var teamLeads = new List<Employee>();
-            foreach (var teamLeadName in teamLeadNames) 
+            foreach (var name in teamLeadNames)
             {
-                teamLeads.Add(new Employee() {Name = teamLeadName});
+                var employee = new Employee { Name = name };
+                context.Employees.Add(employee);
+                teamLeads.Add(employee);
             }
 
-            var juniorNames = DreamTeamConsole.Models.CsvLoader.LoadEmployeeNamesFromCsv("../csvFiles/Teamleads20.csv");
+            var juniorNames = DreamTeamConsole.Models.CsvLoader.LoadEmployeeNamesFromCsv("../csvFiles/Juniors20.csv");
             var juniors = new List<Employee>();
-            foreach (var juniorName in juniorNames)
+            foreach (var name in juniorNames)
             {
-                juniors.Add(new Employee() {Name = juniorName});
+                var employee = new Employee { Name = name };
+                context.Employees.Add(employee);
+                juniors.Add(employee);
             }
 
-            context.Employees.AddRange(teamLeads);
-            context.Employees.AddRange(juniors);
             context.SaveChanges();
 
-            var hackathon = new Hackathon(teamLeads, juniors);
+            var hackathon = new Hackathon
+            {
+                TeamLeadIds = teamLeads.Select(tl => tl.Id).ToList(),
+                JuniorIds = juniors.Select(jr => jr.Id).ToList()
+            };
             context.Hackathons.Add(hackathon);
             context.SaveChanges();
 
             var hrManager = serviceProvider.GetRequiredService<HrManager>();
 
-            foreach (var tl in teamLeads)
+            foreach (var teamLead in teamLeads)
             {
-                var wishlist = tl.GenerateWishlist(juniors);
-                tl.SendWishlistToHrManager(wishlist, "TeamLead", hrManager);
+                var wishlist = teamLead.GenerateWishlist(juniors);
+                context.Wishlists.Add(wishlist);
             }
 
-            foreach (var jr in juniors)
+            foreach (var junior in juniors)
             {
-                var wishlist = jr.GenerateWishlist(teamLeads);
-                jr.SendWishlistToHrManager(wishlist, "Junior", hrManager);
+                var wishlist = junior.GenerateWishlist(teamLeads);
+                context.Wishlists.Add(wishlist);
             }
 
-            ITeamBuildingStrategy strategy = new MegaTeamBuildingStrategy();
-            var teams = hrManager.GenerateTeams(strategy, hackathon);
-            hackathon.Teams = teams;
-            context.Teams.AddRange(teams);
             context.SaveChanges();
 
-            var hrDirector = serviceProvider.GetRequiredService<HrDirector>();
-            hrManager.SendTeamsToHrDirector(teams, hrDirector);
-            hackathon.HarmonyScore = hrDirector.CalculateTeamsScore();
-            context.SaveChanges();
+            // Now pass wishlist IDs to hrManager
+            var teamLeadWishlistIds = context.Wishlists
+                .Where(w => teamLeads.Select(tl => tl.Id).Contains(w.EmployeeId))
+                .Select(w => w.WishlistId).ToList();
 
-            Console.WriteLine($"ИД Хакатона: {hackathon.HackathonId}");
-            Console.WriteLine($"Среднее гармоническое: {hackathon.HarmonyScore}");
+            var juniorWishlistIds = context.Wishlists
+                .Where(w => juniors.Select(jr => jr.Id).Contains(w.EmployeeId))
+                .Select(w => w.WishlistId).ToList();
+
+            foreach (var wishlistId in teamLeadWishlistIds)
+            {
+                hrManager.ReceiveWishlist(wishlistId, "TeamLead");
+            }
+
+            foreach (var wishlistId in juniorWishlistIds)
+            {
+                hrManager.ReceiveWishlist(wishlistId, "Junior");
+            }
+
+            ITeamBuildingStrategy strategy = new RandomTeamBuildingStrategy();
+            var teams = hrManager.GenerateTeams(strategy, hackathon.HackathonId);
 
             foreach (var team in teams)
             {
-                Console.WriteLine(team);
+                team.HackathonId = hackathon.HackathonId;
+                context.Teams.Add(team);
             }
 
+            context.SaveChanges();
+
+            var hrDirector = serviceProvider.GetRequiredService<HrDirector>();
+            hrManager.SendTeamsToHrDirector(teams.Select(t => t.TeamId).ToList(), hrDirector);
+
+            hackathon.HarmonyScore = hrDirector.CalculateTeamsScore();
+            context.SaveChanges();
+
+            Console.WriteLine($"Hackathon ID: {hackathon.HackathonId}");
+            Console.WriteLine($"Harmony Score: {hackathon.HarmonyScore}");
+
             var averageHarmony = context.Hackathons.Average(h => h.HarmonyScore);
-            Console.WriteLine($"Средняя гармоничность по всем хакатонам: {averageHarmony}");
+            Console.WriteLine($"Average Harmony Score: {averageHarmony}");
         }
     }
 }

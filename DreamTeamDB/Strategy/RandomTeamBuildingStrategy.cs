@@ -1,27 +1,27 @@
 using DreamTeamDB.Models;
 
-namespace DreamTeamDB.Strategy 
+namespace DreamTeamDB.Strategy
 {
     public class RandomTeamBuildingStrategy : ITeamBuildingStrategy
     {
         public IEnumerable<Team> BuildTeams(
-            IEnumerable<Employee> teamLeads, 
-            IEnumerable<Employee> juniors, 
-            IEnumerable<Wishlist> teamLeadsWishlists, 
-            IEnumerable<Wishlist> juniorsWishlists
-        ) {
-            List<Team> Teams = [];
+            IEnumerable<Employee> teamLeads,
+            IEnumerable<Employee> juniors,
+            IEnumerable<Wishlist> teamLeadsWishlists,
+            IEnumerable<Wishlist> juniorsWishlists)
+        {
             var random = new Random();
+            var shuffledTeamLeads = teamLeads.OrderBy(_ => random.Next()).ToList();
+            var shuffledJuniors = juniors.OrderBy(_ => random.Next()).ToList();
 
-            var shuffledJuniors = juniors.OrderBy(i => random.Next()).ToList();
-            var shuffledTeamLeads = teamLeads.OrderBy(i => random.Next()).ToList();
+            var teams = new List<Team>();
+            int teamCount = Math.Min(shuffledTeamLeads.Count, shuffledJuniors.Count);
 
-            for (int i = 0; i < shuffledTeamLeads.Count; i++)
+            for (int i = 0; i < teamCount; i++)
             {
-                // Console.WriteLine($"[LOG] Команда: {shuffledTeamLeads[i].Id} : {shuffledJuniors[i].Id}");
-                Teams.Add(new Team(shuffledTeamLeads[i], shuffledJuniors[i]));
+                teams.Add(new Team(shuffledTeamLeads[i].Id, shuffledJuniors[i].Id));
             }
-            return Teams;
+            return teams;
         }
     }
 }

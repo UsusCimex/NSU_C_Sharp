@@ -1,44 +1,65 @@
 using DreamTeamDB.Strategy;
+using DreamTeamDB.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace DreamTeamDB.Models
 {
     public class HrManager
     {
-        private readonly List<Wishlist> juniorWishlists = [];
-        private readonly List<Wishlist> teamLeadWishlists = [];
+        private readonly HackathonContext _context;
 
-        public void ReceiveWishlist(Wishlist wishlist, string type)
+        private readonly List<int> juniorWishlistIds = new List<int>();
+        private readonly List<int> teamLeadWishlistIds = new List<int>();
+
+        public HrManager(HackathonContext context)
+        {
+            _context = context;
+        }
+
+        public void ReceiveWishlist(int wishlistId, string type)
         {
             if (type.Equals("Junior"))
             {
-                juniorWishlists.Add(wishlist);
+                juniorWishlistIds.Add(wishlistId);
             }
             else
             {
-                teamLeadWishlists.Add(wishlist);
+                teamLeadWishlistIds.Add(wishlistId);
             }
         }
 
-        public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, Hackathon hackathon)
+        public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, int hackathonId)
         {
-            return teamBuildingStrategy.BuildTeams(
-                hackathon.TeamLeads,
-                hackathon.Juniors,
+            var hackathon = _context.Hackathons
+                                    .Include(h => h.Teams)
+                                    .FirstOrDefault(h => h.HackathonId == hackathonId)
+                                    ?? throw new Exception("Hackathon not found");
+
+            var teamLeads = _context.Employees.Where(e => hackathon.TeamLeadIds.Contains(e.Id)).ToList();
+            var juniors = _context.Employees.Where(e => hackathon.JuniorIds.Contains(e.Id)).ToList();
+
+            var teamLeadWishlists = _context.Wishlists.Where(w => teamLeadWishlistIds.Contains(w.WishlistId)).ToList();
+            var juniorWishlists = _context.Wishlists.Where(w => juniorWishlistIds.Contains(w.WishlistId)).ToList();
+
+            var teams = teamBuildingStrategy.BuildTeams(
+                teamLeads,
+                juniors,
                 teamLeadWishlists,
                 juniorWishlists
             ).ToList();
+
+            return teams;
         }
 
-        public void SendTeamsToHrDirector(List<Team> teams, HrDirector hrDirector)
+        public void SendTeamsToHrDirector(List<int> teamIds, HrDirector hrDirector)
         {
-            var allWishlists = teamLeadWishlists.Concat(juniorWishlists).ToList();
-            hrDirector.ReceiveTeamsAndWishlists(teams, allWishlists);
+            hrDirector.ReceiveTeamsAndWishlists(teamIds, teamLeadWishlistIds.Concat(juniorWishlistIds).ToList());
         }
 
         public void ClearAllWishlists()
         {
-            juniorWishlists.Clear();
-            teamLeadWishlists.Clear();
+            juniorWishlistIds.Clear();
+            teamLeadWishlistIds.Clear();
         }
     }
 }

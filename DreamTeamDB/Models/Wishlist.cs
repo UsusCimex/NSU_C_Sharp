@@ -8,23 +8,20 @@ namespace DreamTeamDB.Models
         public int WishlistId { get; set; }
 
         public int EmployeeId { get; set; }
-        public virtual Employee Employee { get; set; } = null!;
 
-        public int[] DesiredEmployees { get; set; } = [];
+        public int[] DesiredEmployeeIds { get; set; } = Array.Empty<int>();
 
-        public Wishlist()
+        public Wishlist() { }
+
+        public Wishlist(int employeeId, int[] desiredEmployeeIds)
         {
-        }
-
-        public Wishlist(Wishlist wishlist)
-        {
-            EmployeeId = wishlist.EmployeeId;
-            DesiredEmployees = wishlist.DesiredEmployees ?? Array.Empty<int>();
+            EmployeeId = employeeId;
+            DesiredEmployeeIds = desiredEmployeeIds ?? Array.Empty<int>();
         }
 
         public override string ToString()
         {
-            return $"Wishlist({EmployeeId})";
+            return $"Wishlist(EmployeeId: {EmployeeId}, DesiredEmployeeIds: [{string.Join(", ", DesiredEmployeeIds)}])";
         }
     }
 }
