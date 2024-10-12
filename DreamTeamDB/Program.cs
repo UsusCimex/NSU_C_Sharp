@@ -65,7 +65,6 @@ namespace DreamTeamDB
 
             context.SaveChanges();
 
-            // Now pass wishlist IDs to hrManager
             var teamLeadWishlistIds = context.Wishlists
                 .Where(w => teamLeads.Select(tl => tl.Id).Contains(w.EmployeeId))
                 .Select(w => w.WishlistId).ToList();
@@ -101,11 +100,11 @@ namespace DreamTeamDB
             hackathon.HarmonyScore = hrDirector.CalculateTeamsScore();
             context.SaveChanges();
 
-            Console.WriteLine($"Hackathon ID: {hackathon.HackathonId}");
-            Console.WriteLine($"Harmony Score: {hackathon.HarmonyScore}");
+            Console.WriteLine($"Хакатон ID: {hackathon.HackathonId}");
+            Console.WriteLine($"Среднее гармоническое: {hackathon.HarmonyScore}");
 
             var averageHarmony = context.Hackathons.Average(h => h.HarmonyScore);
-            Console.WriteLine($"Average Harmony Score: {averageHarmony}");
+            Console.WriteLine($"Общее среднее гармоническое: {averageHarmony}");
         }
     }
 }
