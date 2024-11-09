@@ -1,0 +1,205 @@
+services:
+
+  rabbitmq: # login guest:guest
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    labels:
+      NAME: "rabbitmq"
+    networks:
+      - dream-team-network
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "25672:25672"
+      - "15671:15671"
+      - "15672:15672"
+    
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: hackathon_db
+    networks:
+      - dream-team-network
+    ports:
+      - "3306:3306"
+
+  hrmanager:
+    build: .
+    environment:
+      SERVICE_TYPE: HRManager
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  hrdirector:
+    build: .
+    environment:
+      SERVICE_TYPE: HRDirector
+    depends_on:
+      - mysql
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  junior1:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 1
+      PARTICIPANT_NAME: "Юдин Адам"
+      PARTICIPANT_ROLE: "Junior"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  junior2:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 2
+      PARTICIPANT_NAME: "Яшина Яна"
+      PARTICIPANT_ROLE: "Junior"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  junior3:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 3
+      PARTICIPANT_NAME: "Никитина Вероника"
+      PARTICIPANT_ROLE: "Junior"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  junior4:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 4
+      PARTICIPANT_NAME: "Рябинин Александр"
+      PARTICIPANT_ROLE: "Junior"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  junior5:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 5
+      PARTICIPANT_NAME: "Ильин Тимофей"
+      PARTICIPANT_ROLE: "Junior"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  teamplead1:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 6
+      PARTICIPANT_NAME: "Филиппова Ульяна"
+      PARTICIPANT_ROLE: "TeamLead"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  teamplead2:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 7
+      PARTICIPANT_NAME: "Николаев Григорий"
+      PARTICIPANT_ROLE: "TeamLead"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  teamplead3:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 8
+      PARTICIPANT_NAME: "Андреева Вероника"
+      PARTICIPANT_ROLE: "TeamLead"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  teamplead4:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 9
+      PARTICIPANT_NAME: "Коротков Михаил"
+      PARTICIPANT_ROLE: "TeamLead"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+  teamplead5:
+    build: .
+    environment:
+      SERVICE_TYPE: Participant
+      PARTICIPANT_ID: 10
+      PARTICIPANT_NAME: "Кузнецов Александр"
+      PARTICIPANT_ROLE: "TeamLead"
+    depends_on:
+      - rabbitmq
+    networks:
+      - dream-team-network
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+
+networks:
+  dream-team-network:
+    driver: bridge
