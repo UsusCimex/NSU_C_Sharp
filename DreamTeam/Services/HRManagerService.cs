@@ -32,7 +32,7 @@ namespace DreamTeam.Services
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
-            _wishlistsPerHackathon = new Dictionary<int, List<Wishlist>>();
+            _wishlistsPerHackathon = [];
 
             // Читаем участников из файлов
             _teamLeads = ParticipantReader.ReadParticipants("TeamLeads.csv");
@@ -49,7 +49,6 @@ namespace DreamTeam.Services
 
         public void Start()
         {
-            Console.WriteLine("HRManagerService запущен и ожидает вишлисты.");
             // Ожидание сообщений происходит асинхронно через RabbitMQ
         }
 
