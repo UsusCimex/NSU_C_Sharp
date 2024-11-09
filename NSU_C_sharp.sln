@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeam.Tests", "DreamTea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeamDB", "DreamTeamDB\DreamTeamDB.csproj", "{7275063C-E73C-421A-A773-763D7FA06AED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreamTeam", "DreamTeam\DreamTeam.csproj", "{C0C2A8C3-B01F-4B0E-ABA2-2B6B8EE6469B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7275063C-E73C-421A-A773-763D7FA06AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7275063C-E73C-421A-A773-763D7FA06AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7275063C-E73C-421A-A773-763D7FA06AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C2A8C3-B01F-4B0E-ABA2-2B6B8EE6469B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C2A8C3-B01F-4B0E-ABA2-2B6B8EE6469B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C2A8C3-B01F-4B0E-ABA2-2B6B8EE6469B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C2A8C3-B01F-4B0E-ABA2-2B6B8EE6469B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
