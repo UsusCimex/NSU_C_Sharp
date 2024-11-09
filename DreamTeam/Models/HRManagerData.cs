@@ -2,7 +2,7 @@ namespace DreamTeam.Models
 {
     public class HRManagerData
     {
-        public List<Team> Teams { get; set; }
-        public List<Wishlist> Wishlists { get; set; }
+        public required List<Team> Teams { get; set; }
+        public required List<Wishlist> Wishlists { get; set; }
     }
 }

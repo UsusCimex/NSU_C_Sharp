@@ -1,21 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using DreamTeam.Models;
 using DreamTeam.Utilities;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using MySql.Data.MySqlClient;
 
-namespace DreamTeam
+namespace DreamTeam.Services
 {
-    public class HRDirectorService
+    public class HRDirectorService : DreamTeamService
     {
         private readonly IModel _channel;
         private readonly string _connectionString = "Server=mysql;Database=hackathon_db;User=root;Password=yourpassword;";
@@ -25,14 +17,13 @@ namespace DreamTeam
         public HRDirectorService()
         {
             // Подключение к RabbitMQ
-            var factory = new ConnectionFactory()
+            var factory = new ConnectionFactory
             {
                 HostName = "rabbitmq",
                 Port = 5672,
+                UserName = "guest",
+                Password = "guest"
             };
-
-            factory.UserName = "guest";
-            factory.Password = "guest";
 
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
@@ -49,10 +40,10 @@ namespace DreamTeam
             builder.Services.AddLogging();
             var app = builder.Build();
 
-            app.MapPost("/api/teams", async (context) =>
+            _ = app.MapPost("/api/teams", async (context) =>
             {
                 var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
-                var data = JsonConvert.DeserializeObject<HRManagerData>(body);
+                var data = JsonConvert.DeserializeObject<HRManagerData>(body)!;
 
                 CalculateAndSaveHappiness(data.Teams, data.Wishlists);
 
@@ -140,6 +131,11 @@ namespace DreamTeam
             command.ExecuteNonQuery();
 
             Console.WriteLine($"HRDirector: Результаты хакатона {hackathonId} сохранены в базу данных.");
+        }
+
+        public override string ToString()
+        {
+            return "HRDirector";
         }
     }
 }

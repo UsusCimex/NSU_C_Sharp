@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace DreamTeam
+namespace DreamTeam.Services
 {
-    public class ParticipantService
+    public class ParticipantService : DreamTeamService
     {
         private readonly Participant _participant;
         private readonly IModel _channel;
@@ -19,14 +19,13 @@ namespace DreamTeam
             _participant = participant;
 
             // Подключение к RabbitMQ
-            var factory = new ConnectionFactory()
+            var factory = new ConnectionFactory
             {
                 HostName = "rabbitmq",
                 Port = 5672,
+                UserName = "guest",
+                Password = "guest"
             };
-
-            factory.UserName = "guest";
-            factory.Password = "guest";
 
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
@@ -38,7 +37,7 @@ namespace DreamTeam
             _channel.QueueBind(queue: queueName, exchange: hackathonExchange, routingKey: "");
 
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += OnHackathonStarted;
+            consumer.Received += OnHackathonStarted!;
             _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
         }
 
@@ -50,7 +49,7 @@ namespace DreamTeam
         private void OnHackathonStarted(object sender, BasicDeliverEventArgs e)
         {
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
-            var hackathonStart = JsonConvert.DeserializeObject<HackathonStartMessage>(message);
+            var hackathonStart = JsonConvert.DeserializeObject<HackathonStartMessage>(message)!;
 
             Console.WriteLine($"[{_participant.Role}] {_participant.Name} получил уведомление о начале хакатона {hackathonStart.HackathonId}");
 
@@ -83,6 +82,11 @@ namespace DreamTeam
             _channel.BasicPublish(exchange: "", routingKey: wishlistQueue, basicProperties: null, body: body);
 
             Console.WriteLine($"[{_participant.Role}] {_participant.Name} отправил вишлист для хакатона {hackathonId}");
+        }
+
+        public override string ToString()
+        {
+            return _participant.ToString()!;
         }
     }
 }

@@ -15,5 +15,12 @@ namespace DreamTeam.Models
         {
             Role = role;
         }
+
+        public override string ToString()
+        {
+            return Role==EmployeeRole.Junior ?
+                $"Junior(id={Id}, name={Name})" :
+                $"TeamLead(id={Id}, name={Name})";
+        }
     }
 }

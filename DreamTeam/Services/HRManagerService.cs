@@ -7,9 +7,9 @@ using RabbitMQ.Client.Events;
 using System.Data.SqlClient;
 using DreamTeam.Strategy;
 
-namespace DreamTeam
+namespace DreamTeam.Services
 {
-    public class HRManagerService
+    public class HRManagerService : DreamTeamService
     {
         private readonly IModel _channel;
         private readonly Dictionary<int, List<Wishlist>> _wishlistsPerHackathon;
@@ -21,14 +21,13 @@ namespace DreamTeam
         public HRManagerService()
         {
             // Подключение к RabbitMQ
-            var factory = new ConnectionFactory()
+            var factory = new ConnectionFactory
             {
                 HostName = "rabbitmq",
                 Port = 5672,
+                UserName = "guest",
+                Password = "guest"
             };
-
-            factory.UserName = "guest";
-            factory.Password = "guest";
 
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
@@ -44,7 +43,7 @@ namespace DreamTeam
             _channel.QueueDeclare(queue: wishlistQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += OnWishlistReceived;
+            consumer.Received += OnWishlistReceived!;
             _channel.BasicConsume(queue: wishlistQueue, autoAck: true, consumer: consumer);
         }
 
@@ -57,7 +56,7 @@ namespace DreamTeam
         private void OnWishlistReceived(object sender, BasicDeliverEventArgs e)
         {
             var message = Encoding.UTF8.GetString(e.Body.ToArray());
-            var wishlist = JsonConvert.DeserializeObject<Wishlist>(message);
+            var wishlist = JsonConvert.DeserializeObject<Wishlist>(message)!;
 
             Console.WriteLine($"HRManager: Получен вишлист от сотрудника {wishlist.EmployeeId} для хакатона {wishlist.HackathonId}");
 
@@ -137,6 +136,11 @@ namespace DreamTeam
             command.ExecuteNonQuery();
 
             Console.WriteLine($"HRManager: Вишлист сотрудника {wishlist.EmployeeId} для хакатона {wishlist.HackathonId} сохранен в локальную базу данных.");
+        }
+
+        public override string ToString()
+        {
+            return "HRManager";
         }
     }
 }

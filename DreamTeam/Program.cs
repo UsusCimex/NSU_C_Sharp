@@ -1,5 +1,6 @@
 ﻿using System;
 using DreamTeam.Models;
+using DreamTeam.Services;
 
 namespace DreamTeam
 {
@@ -7,38 +8,39 @@ namespace DreamTeam
     {
         static void Main(string[] args)
         {
-            var serviceType = Environment.GetEnvironmentVariable("SERVICE_TYPE") ?? "";
+            DreamTeamService service;
+            var serviceType = Environment.GetEnvironmentVariable("SERVICE_TYPE");
 
             switch (serviceType)
             {
                 case "HRDirector":
-                    var hrDirectorService = new HRDirectorService();
-                    hrDirectorService.Start();
+                    service = new HRDirectorService();
                     break;
 
                 case "HRManager":
-                    var hrManagerService = new HRManagerService();
-                    hrManagerService.Start();
+                    service = new HRManagerService();
                     break;
 
                 case "Participant":
-                    int participantId = int.Parse(Environment.GetEnvironmentVariable("PARTICIPANT_ID") ?? args[1]);
-                    string participantName = Environment.GetEnvironmentVariable("PARTICIPANT_NAME") ?? args[2];
-                    string roleString = Environment.GetEnvironmentVariable("PARTICIPANT_ROLE") ?? args[3];
+                    int participantId = int.Parse(Environment.GetEnvironmentVariable("PARTICIPANT_ID")
+                        ?? throw new InvalidOperationException("PARTICIPANT_NAME environment variable is not set."));
+                    string participantName = Environment.GetEnvironmentVariable("PARTICIPANT_NAME")
+                        ?? throw new InvalidOperationException("PARTICIPANT_NAME environment variable is not set.");
+                    string roleString = Environment.GetEnvironmentVariable("PARTICIPANT_ROLE")
+                        ?? throw new InvalidOperationException("PARTICIPANT_ROLE environment variable is not set.");
 
                     EmployeeRole role = roleString == "TeamLead" ? EmployeeRole.TeamLead : EmployeeRole.Junior;
 
                     var participant = new Participant(participantId, participantName, role);
-                    var participantService = new ParticipantService(participant);
-                    participantService.Start();
-
-                    Console.WriteLine($"Участник {participantName} запущен и ожидает уведомления о хакатонах.");
+                    service = new ParticipantService(participant);
                     break;
 
                 default:
-                    Console.WriteLine("Неверный тип сервиса. Укажите SERVICE_TYPE: HRDirector, HRManager или Participant.");
-                    break;
+                    throw new Exception("Неверный тип сервиса. Укажите SERVICE_TYPE: HRDirector, HRManager или Participant.");
             }
+
+            service.Start();
+            Console.WriteLine($"Сервис {service} запущен.");
         }
     }
 }
