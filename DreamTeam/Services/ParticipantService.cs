@@ -33,7 +33,8 @@ namespace DreamTeam.Services
             // Подписка на уведомления о начале хакатона
             var hackathonExchange = "hackathon_exchange";
             _channel.ExchangeDeclare(exchange: hackathonExchange, type: ExchangeType.Fanout);
-            var queueName = _channel.QueueDeclare().QueueName;
+            var queueName = "persistent_hackathon_queue";
+            _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
             _channel.QueueBind(queue: queueName, exchange: hackathonExchange, routingKey: "");
 
             var consumer = new EventingBasicConsumer(_channel);

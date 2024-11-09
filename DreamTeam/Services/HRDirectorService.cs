@@ -75,11 +75,13 @@ namespace DreamTeam.Services
 
                 var hackathonExchange = "hackathon_exchange";
                 _channel.ExchangeDeclare(exchange: hackathonExchange, type: ExchangeType.Fanout);
+                // Устанавливаем свойство persistent для сообщения
+                var properties = _channel.CreateBasicProperties();
+                properties.Persistent = true;
 
-                _channel.BasicPublish(exchange: hackathonExchange, routingKey: "", basicProperties: null, body: body);
+                _channel.BasicPublish(exchange: hackathonExchange, routingKey: "", basicProperties: properties, body: body);
 
                 Console.WriteLine($"HRDirector: Отправлено уведомление о начале хакатона {i}");
-
                 // Ждем некоторое время перед запуском следующего хакатона
                 Thread.Sleep(1000);
             }

@@ -39,12 +39,13 @@ namespace DreamTeam.Services
             _juniors = ParticipantReader.ReadParticipants("Juniors.csv");
 
             // Подписка на получение вишлистов
-            var wishlistQueue = "wishlist_queue";
-            _channel.QueueDeclare(queue: wishlistQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var queueName = "wishlist_queue";
+            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueBind(queue: queueName, exchange: "", routingKey: "");
 
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += OnWishlistReceived!;
-            _channel.BasicConsume(queue: wishlistQueue, autoAck: true, consumer: consumer);
+            _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
         }
 
         public void Start()
