@@ -4,8 +4,8 @@ using DreamTeam.Utilities;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Data.SqlClient;
 using DreamTeam.Strategy;
+using MySql.Data.MySqlClient;
 
 namespace DreamTeam.Services
 {
@@ -14,12 +14,14 @@ namespace DreamTeam.Services
         private readonly IModel _channel;
         private readonly Dictionary<int, List<Wishlist>> _wishlistsPerHackathon;
         private readonly object _lockObject = new object();
-        private readonly string _connectionString = "Server=localhost;Database=hrmanager_db;User Id=sa;Password=Your_password123;";
+        private readonly string _connectionString = "Server=mysql;Database=hackathon_db;User ID=root;Password=pass;";
         private List<Employee> _teamLeads;
         private List<Employee> _juniors;
 
         public HRManagerService()
         {
+            EnsureWishlistTableExists();
+
             // Подключение к RabbitMQ
             var factory = new ConnectionFactory
             {
@@ -39,13 +41,30 @@ namespace DreamTeam.Services
             _juniors = ParticipantReader.ReadParticipants("Juniors.csv");
 
             // Подписка на получение вишлистов
-            var queueName = "wishlist_queue";
-            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            _channel.QueueBind(queue: queueName, exchange: "", routingKey: "");
+            var wishlistsExchange = "wishlists_exchange";
+            _channel.ExchangeDeclare(exchange: wishlistsExchange, type: ExchangeType.Fanout);
+            var queueName = _channel.QueueDeclare().QueueName;
+            _channel.QueueBind(queue: queueName, exchange: wishlistsExchange, routingKey: "");
 
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += OnWishlistReceived!;
             _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
+        }
+
+        private void EnsureWishlistTableExists()
+        {
+            using var connection = new MySqlConnection(_connectionString);
+            connection.Open();
+
+            var command = new MySqlCommand(@"
+                CREATE TABLE IF NOT EXISTS Wishlists (
+                    EmployeeId INT NOT NULL,
+                    HackathonId INT NOT NULL,
+                    DesiredEmployeeIds VARCHAR(255),
+                    PRIMARY KEY (EmployeeId, HackathonId)
+                )", connection);
+
+            command.ExecuteNonQuery();
         }
 
         public void Start()
@@ -90,7 +109,7 @@ namespace DreamTeam.Services
         {
             var wishlists = _wishlistsPerHackathon[hackathonId];
 
-            var teamBuildingStrategy = new RandomTeamBuildingStrategy();
+            var teamBuildingStrategy = new MegaTeamBuildingStrategy();
             var teams = teamBuildingStrategy.BuildTeams(
                 hackathonId,
                 _teamLeads,
@@ -106,17 +125,21 @@ namespace DreamTeam.Services
             };
 
             // Отправка данных HRDirector'у через HTTP
-            using var httpClient = new HttpClient();
-            var content = new StringContent(JsonConvert.SerializeObject(hrManagerData), Encoding.UTF8, "application/json");
-            var response = httpClient.PostAsync("http://hrdirector-service/api/teams", content).Result;
+            try {
+                using var httpClient = new HttpClient();
+                var content = new StringContent(JsonConvert.SerializeObject(hrManagerData), Encoding.UTF8, "application/json");
+                var response = httpClient.PostAsync("http://hrdirector:80/api/teams", content).Result;
 
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"HRManager: Отправлены команды для хакатона {hackathonId} HRDirector'у");
-            }
-            else
-            {
-                Console.WriteLine($"HRManager: Ошибка при отправке данных HRDirector'у: {response.StatusCode}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"HRManager: Отправлены команды для хакатона {hackathonId} HRDirector'у");
+                }
+                else
+                {
+                    Console.WriteLine($"HRManager: Ошибка при отправке данных HRDirector'у: {response.StatusCode}");
+                }
+            } catch(Exception ex) {
+                Console.WriteLine($"Ошибка при отправке HTTP запроса: {ex.Message}");
             }
 
             // Удаляем записи о хакатоне, чтобы освободить память
@@ -125,17 +148,24 @@ namespace DreamTeam.Services
 
         private void SaveWishlistToDatabase(Wishlist wishlist)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
+            try
+            {
+                using var connection = new MySqlConnection(_connectionString);
+                connection.Open();
 
-            var command = new SqlCommand("INSERT INTO Wishlists (EmployeeId, HackathonId, DesiredEmployeeIds) VALUES (@EmployeeId, @HackathonId, @DesiredEmployeeIds)", connection);
-            command.Parameters.AddWithValue("@EmployeeId", wishlist.EmployeeId);
-            command.Parameters.AddWithValue("@HackathonId", wishlist.HackathonId);
-            command.Parameters.AddWithValue("@DesiredEmployeeIds", string.Join(",", wishlist.DesiredEmployeeIds));
+                var command = new MySqlCommand("INSERT INTO Wishlists (EmployeeId, HackathonId, DesiredEmployeeIds) VALUES (@EmployeeId, @HackathonId, @DesiredEmployeeIds)", connection);
+                command.Parameters.AddWithValue("@EmployeeId", wishlist.EmployeeId);
+                command.Parameters.AddWithValue("@HackathonId", wishlist.HackathonId);
+                command.Parameters.AddWithValue("@DesiredEmployeeIds", string.Join(",", wishlist.DesiredEmployeeIds));
 
-            command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
 
-            Console.WriteLine($"HRManager: Вишлист сотрудника {wishlist.EmployeeId} для хакатона {wishlist.HackathonId} сохранен в локальную базу данных.");
+                Console.WriteLine($"HRManager: Вишлист сотрудника {wishlist.EmployeeId} для хакатона {wishlist.HackathonId} сохранен базу данных.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении в базу данных: {ex.Message}");
+            }
         }
 
         public override string ToString()

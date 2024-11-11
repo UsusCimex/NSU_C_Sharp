@@ -10,12 +10,14 @@ namespace DreamTeam.Services
     public class HRDirectorService : DreamTeamService
     {
         private readonly IModel _channel;
-        private readonly string _connectionString = "Server=mysql;Database=hackathon_db;User=root;Password=yourpassword;";
+        private readonly string _connectionString = "Server=mysql;Database=hackathon_db;User=root;Password=pass;";
         private List<Employee> _teamLeads;
         private List<Employee> _juniors;
 
         public HRDirectorService()
         {
+            EnsureHackathonResultsExists();
+
             // Подключение к RabbitMQ
             var factory = new ConnectionFactory
             {
@@ -33,15 +35,34 @@ namespace DreamTeam.Services
             _juniors = ParticipantReader.ReadParticipants("Juniors.csv");
         }
 
+        private void EnsureHackathonResultsExists()
+        {
+            using var connection = new MySqlConnection(_connectionString);
+            connection.Open();
+
+            var command = new MySqlCommand(@"
+                CREATE TABLE HackathonResults (
+                    Id INT AUTO_INCREMENT PRIMARY KEY,
+                    HackathonId INT NOT NULL,
+                    AverageHappiness DOUBLE NOT NULL,
+                    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )", connection);
+
+            command.ExecuteNonQuery();
+        }
+
         public void Start()
         {
             // Запуск веб-сервера для приема команд от HRManager
             var builder = WebApplication.CreateBuilder();
+            builder.WebHost.UseUrls("http://*:80");
             builder.Services.AddLogging();
             var app = builder.Build();
 
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
             _ = app.MapPost("/api/teams", async (context) =>
             {
+                logger.LogInformation("Получен запрос на /api/teams");
                 var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
                 var data = JsonConvert.DeserializeObject<HRManagerData>(body)!;
 
@@ -75,15 +96,11 @@ namespace DreamTeam.Services
 
                 var hackathonExchange = "hackathon_exchange";
                 _channel.ExchangeDeclare(exchange: hackathonExchange, type: ExchangeType.Fanout);
-                // Устанавливаем свойство persistent для сообщения
-                var properties = _channel.CreateBasicProperties();
-                properties.Persistent = true;
-
-                _channel.BasicPublish(exchange: hackathonExchange, routingKey: "", basicProperties: properties, body: body);
+                _channel.BasicPublish(exchange: hackathonExchange, routingKey: "", body: body);
 
                 Console.WriteLine($"HRDirector: Отправлено уведомление о начале хакатона {i}");
-                // Ждем некоторое время перед запуском следующего хакатона
-                Thread.Sleep(1000);
+
+                // Thread.Sleep(1000);
             }
         }
 

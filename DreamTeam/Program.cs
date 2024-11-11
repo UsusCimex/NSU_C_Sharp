@@ -1,5 +1,4 @@
-﻿using System;
-using DreamTeam.Models;
+﻿using DreamTeam.Models;
 using DreamTeam.Services;
 
 namespace DreamTeam
@@ -14,6 +13,7 @@ namespace DreamTeam
             switch (serviceType)
             {
                 case "HRDirector":
+                    Thread.Sleep(5000); // 5 секунд до начала хакатонов
                     service = new HRDirectorService();
                     break;
 
@@ -41,6 +41,7 @@ namespace DreamTeam
 
             service.Start();
             Console.WriteLine($"Сервис {service} запущен.");
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

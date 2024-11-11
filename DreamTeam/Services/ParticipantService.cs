@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using DreamTeam.Models;
 using Newtonsoft.Json;
@@ -33,8 +30,7 @@ namespace DreamTeam.Services
             // Подписка на уведомления о начале хакатона
             var hackathonExchange = "hackathon_exchange";
             _channel.ExchangeDeclare(exchange: hackathonExchange, type: ExchangeType.Fanout);
-            var queueName = "persistent_hackathon_queue";
-            _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            var queueName = _channel.QueueDeclare().QueueName;
             _channel.QueueBind(queue: queueName, exchange: hackathonExchange, routingKey: "");
 
             var consumer = new EventingBasicConsumer(_channel);
@@ -75,12 +71,13 @@ namespace DreamTeam.Services
             var wishlist = new Wishlist(_participant.Id, hackathonId, desiredEmployees);
 
             // Отправка вишлиста в RabbitMQ
-            var wishlistQueue = "wishlist_queue";
-            _channel.QueueDeclare(queue: wishlistQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var wishlistsExchange = "wishlists_exchange";
+            var queueName = _channel.QueueDeclare().QueueName;
+            _channel.QueueBind(queue: queueName, exchange: wishlistsExchange, routingKey: "");
             var message = JsonConvert.SerializeObject(wishlist);
             var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(exchange: "", routingKey: wishlistQueue, basicProperties: null, body: body);
+            _channel.BasicPublish(exchange: wishlistsExchange, routingKey: "", basicProperties: null, body: body);
 
             Console.WriteLine($"[{_participant.Role}] {_participant.Name} отправил вишлист для хакатона {hackathonId}");
         }
