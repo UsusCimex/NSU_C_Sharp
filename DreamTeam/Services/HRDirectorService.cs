@@ -99,8 +99,6 @@ namespace DreamTeam.Services
                 _channel.BasicPublish(exchange: hackathonExchange, routingKey: "", body: body);
 
                 Console.WriteLine($"HRDirector: Отправлено уведомление о начале хакатона {i}");
-
-                // Thread.Sleep(1000);
             }
         }
 

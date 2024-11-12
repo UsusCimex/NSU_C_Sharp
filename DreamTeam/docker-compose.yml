@@ -31,6 +31,8 @@ services:
     ports:
       - "3306:3306"
     restart: always
+    # volumes:
+    #   - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD}"]
       interval: 2s
@@ -230,3 +232,6 @@ services:
 networks:
   dream-team-network:
     driver: bridge
+
+# volumes:
+#   mysql_data:
