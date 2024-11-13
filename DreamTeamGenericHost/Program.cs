@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DreamTeamConsole.Models;
 using DreamTeamConsole.Strategy;
-using System.Security.Cryptography;
 
 namespace DreamTeamGenericHost
 {
@@ -14,7 +13,7 @@ namespace DreamTeamGenericHost
                 .ConfigureServices((hostContext, services) =>
                 {
                     var configuration = hostContext.Configuration;
-                    string teamLeadsCsvPath = configuration["TeamLeadsCsvPath"] ?? throw new FileLoadException("TeamLeadsCsvPath not found");;
+                    string teamLeadsCsvPath = configuration["TeamLeadsCsvPath"] ?? throw new FileLoadException("TeamLeadsCsvPath not found");
                     string juniorsCsvPath = configuration["JuniorsCsvPath"] ?? throw new FileLoadException("JuniorsCsvPath not found");
                     
                     services.AddHostedService<HackathonWorker>();
