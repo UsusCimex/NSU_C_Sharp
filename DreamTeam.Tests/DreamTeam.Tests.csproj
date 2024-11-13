@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DreamTeamConsole\DreamTeam.csproj" />
+    <ProjectReference Include="..\DreamTeamConsole\DreamTeamConsole.csproj" />
     <ProjectReference Include="..\DreamTeamDB\DreamTeamDB.csproj" />
   </ItemGroup>
 
