@@ -2,3 +2,4 @@ obj/
 bin/
 csvFiles/
 *.db*
+.vscode/
