@@ -7,6 +7,15 @@ namespace DreamTeamConsole.Models
     {
         private readonly List<Wishlist> juniorWishlists = [];
         private readonly List<Wishlist> teamLeadWishlists = [];
+        private readonly ITeamBuildingStrategy? strategyDI;
+
+        public HrManager(ITeamBuildingStrategy strategy) {
+            strategyDI = strategy;
+        }
+
+        public HrManager() {
+        }
+
 
         public void ReceiveWishlist(Wishlist wishlist, string type)
         {
@@ -20,6 +29,16 @@ namespace DreamTeamConsole.Models
         public List<Team> GenerateTeams(ITeamBuildingStrategy teamBuildingStrategy, Hackathon hackaton)
         {
             return (List<Team>)teamBuildingStrategy.BuildTeams(
+                hackaton.TeamLeads,
+                hackaton.Juniors,
+                teamLeadWishlists,
+                juniorWishlists
+            );
+        }
+
+        public List<Team> GenerateTeams(Hackathon hackaton)
+        {
+            return (List<Team>)strategyDI!.BuildTeams(
                 hackaton.TeamLeads,
                 hackaton.Juniors,
                 teamLeadWishlists,
