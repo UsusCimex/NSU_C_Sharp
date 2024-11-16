@@ -133,7 +133,7 @@ namespace DreamTeam.Services
                     return 5 - index; // +5 за первое место, +4 за второе и т.д.
                 }
             }
-            return 1; // Минимальная оценка, если сотрудник не в вишлисте
+            return 1;
         }
 
         private void SaveResultToDatabase(int hackathonId, double averageHappiness)

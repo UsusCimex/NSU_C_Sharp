@@ -5,7 +5,7 @@ namespace DreamTeam.Strategy
     public class MegaTeamBuildingStrategy : ITeamBuildingStrategy
     {
         public IEnumerable<Team> BuildTeams(
-            int hackathon_id,
+            int hackathonId,
             IEnumerable<Employee> teamLeads,
             IEnumerable<Employee> juniors,
             IEnumerable<Wishlist> teamLeadsWishlists,
@@ -61,7 +61,7 @@ namespace DreamTeam.Strategy
                 {
                     var teamLead = teamLeadsList[i];
                     var junior = juniorsList[juniorIndex];
-                    teams.Add(new Team(hackathon_id, teamLead, junior));
+                    teams.Add(new Team(hackathonId, teamLead, junior));
                 }
             }
 

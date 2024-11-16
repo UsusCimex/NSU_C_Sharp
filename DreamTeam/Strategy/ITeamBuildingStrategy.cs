@@ -11,7 +11,7 @@ namespace DreamTeam.Strategy
         /// <param name="juniors">Джуны</param>
         /// <returns>Список команд</returns>
         IEnumerable<Team> BuildTeams(
-            int hackathon_id, 
+            int hackathonId, 
             IEnumerable<Employee> teamLeads, 
             IEnumerable<Employee> juniors,
             IEnumerable<Wishlist> teamLeadsWishlists, 

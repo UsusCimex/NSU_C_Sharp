@@ -5,7 +5,7 @@ namespace DreamTeam.Strategy
     public class RandomTeamBuildingStrategy : ITeamBuildingStrategy
     {
         public IEnumerable<Team> BuildTeams(
-            int hackathon_id,
+            int hackathonId,
             IEnumerable<Employee> teamLeads, 
             IEnumerable<Employee> juniors, 
             IEnumerable<Wishlist> teamLeadsWishlists, 
@@ -20,7 +20,7 @@ namespace DreamTeam.Strategy
             for (int i = 0; i < shuffledTeamLeads.Count; i++)
             {
                 // Console.WriteLine($"[LOG] Команда: {shuffledTeamLeads[i].Id} : {shuffledJuniors[i].Id}");
-                Teams.Add(new Team(hackathon_id, shuffledTeamLeads[i], shuffledJuniors[i]));
+                Teams.Add(new Team(hackathonId, shuffledTeamLeads[i], shuffledJuniors[i]));
             }
             return Teams;
         }
