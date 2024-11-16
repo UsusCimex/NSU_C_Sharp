@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DreamTeamConsole\DreamTeam.csproj" />
+    <ProjectReference Include="..\DreamTeamConsole\DreamTeamConsole.csproj" />
   </ItemGroup>
 
 </Project>
