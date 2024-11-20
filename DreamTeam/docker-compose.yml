@@ -1,83 +1,82 @@
 services:
-
-  rabbitmq: # login guest:guest
+  rabbitmq:
     image: rabbitmq:3-management
-    hostname: "rabbitmq"
-    labels:
-      NAME: "rabbitmq"
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - dream-team-network
-    ports:
-      - "4369:4369"
-      - "5671:5671"
-      - "5672:5672"
-      - "25672:25672"
-      - "15671:15671"
-      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     restart: always
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 5s
+      interval: 3s
       timeout: 1s
-      retries: 5
+      retries: 10
     
   mysql:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: hackathon_db
-    networks:
-      - dream-team-network
     ports:
       - "3306:3306"
+    networks:
+      - dream-team-network
     restart: always
-    # volumes:
-    #   - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD}"]
       interval: 2s
       timeout: 1s
       retries: 5
 
-  hrmanager:
-    build: .
-    environment:
-      SERVICE_TYPE: HRManager
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - dream-team-network
-    volumes:
-      - ./TeamLeads.csv:/app/TeamLeads.csv
-      - ./Juniors.csv:/app/Juniors.csv
-
   hrdirector:
-    build: .
-    environment:
-      SERVICE_TYPE: HRDirector
+    build:
+      context: . 
+      dockerfile: ./HRDirectorService/Dockerfile
     depends_on:
       rabbitmq:
         condition: service_healthy
       mysql:
         condition: service_healthy
-    ports:
-      - "80:80"
-    networks:
-      - dream-team-network
     volumes:
       - ./TeamLeads.csv:/app/TeamLeads.csv
       - ./Juniors.csv:/app/Juniors.csv
+    ports:
+      - "8000:8000"
+    networks:
+      - dream-team-network
+
+  hrmanager:
+    build:
+      context: . 
+      dockerfile: ./HRManagerService/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./TeamLeads.csv:/app/TeamLeads.csv
+      - ./Juniors.csv:/app/Juniors.csv
+    networks:
+      - dream-team-network
 
   junior1:
-    build: .
+    build:
+      context: .
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 1
       PARTICIPANT_NAME: "Юдин Адам"
       PARTICIPANT_ROLE: "Junior"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -86,14 +85,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   junior2:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 2
       PARTICIPANT_NAME: "Яшина Яна"
       PARTICIPANT_ROLE: "Junior"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -102,14 +104,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   junior3:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 3
       PARTICIPANT_NAME: "Никитина Вероника"
       PARTICIPANT_ROLE: "Junior"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -118,14 +123,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   junior4:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 4
       PARTICIPANT_NAME: "Рябинин Александр"
       PARTICIPANT_ROLE: "Junior"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -134,14 +142,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   junior5:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 5
       PARTICIPANT_NAME: "Ильин Тимофей"
       PARTICIPANT_ROLE: "Junior"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -150,14 +161,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   teamplead1:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 6
       PARTICIPANT_NAME: "Филиппова Ульяна"
       PARTICIPANT_ROLE: "TeamLead"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -166,14 +180,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   teamplead2:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 7
       PARTICIPANT_NAME: "Николаев Григорий"
       PARTICIPANT_ROLE: "TeamLead"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -182,14 +199,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   teamplead3:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 8
       PARTICIPANT_NAME: "Андреева Вероника"
       PARTICIPANT_ROLE: "TeamLead"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -198,14 +218,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   teamplead4:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 9
       PARTICIPANT_NAME: "Коротков Михаил"
       PARTICIPANT_ROLE: "TeamLead"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
@@ -214,14 +237,17 @@ services:
       - ./Juniors.csv:/app/Juniors.csv
 
   teamplead5:
-    build: .
+    build:
+      context: . 
+      dockerfile: ./ParticipantService/Dockerfile
     environment:
-      SERVICE_TYPE: Participant
       PARTICIPANT_ID: 10
       PARTICIPANT_NAME: "Кузнецов Александр"
       PARTICIPANT_ROLE: "TeamLead"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - dream-team-network
