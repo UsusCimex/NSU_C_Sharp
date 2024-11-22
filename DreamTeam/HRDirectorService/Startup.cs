@@ -31,7 +31,6 @@ namespace HRDirectorService
             // Настройка MassTransit
             services.AddMassTransit(x =>
             {
-                // Configure MassTransit here
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host("rabbitmq", "/", h =>
