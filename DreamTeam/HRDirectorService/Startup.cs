@@ -27,7 +27,6 @@ namespace HRDirectorService
                 )
             );
 
-
             // Настройка MassTransit
             services.AddMassTransit(x =>
             {

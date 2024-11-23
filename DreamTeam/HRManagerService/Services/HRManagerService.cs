@@ -20,7 +20,6 @@ namespace HRManagerService.Services
             _logger = logger;
             _wishlistsPerHackathon = new Dictionary<int, List<Wishlist>>();
 
-            // Чтение участников из файлов
             _teamLeads = ParticipantReader.ReadParticipants("TeamLeads.csv", EmployeeRole.TeamLead);
             _juniors = ParticipantReader.ReadParticipants("Juniors.csv", EmployeeRole.Junior);
         }

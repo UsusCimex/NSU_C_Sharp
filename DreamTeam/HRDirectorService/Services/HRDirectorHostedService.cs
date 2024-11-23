@@ -44,7 +44,6 @@ namespace HRDirectorService.Services
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("HRDirectorService stopping.");
-            // Здесь можно добавить логику для отмены фоновых задач, если требуется
             return Task.CompletedTask;
         }
 
@@ -104,7 +103,7 @@ namespace HRDirectorService.Services
             if (teams == null || !teams.Any())
             {
                 _logger.LogWarning("Список команд пуст. Невозможно рассчитать удовлетворённость.");
-                return; // Прерываем выполнение метода, так как нет данных
+                return;
             }
 
             int hackathonId = teams.First().HackathonId;
