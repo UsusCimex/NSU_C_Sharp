@@ -7,13 +7,13 @@ using Shared.Models;
 
 namespace ParticipantService.Workers
 {
-    public class ParticipantWorker : BackgroundService
+    public class ParticipantHostedService : BackgroundService
     {
-        private readonly ILogger<ParticipantWorker> _logger;
+        private readonly ILogger<ParticipantHostedService> _logger;
         private readonly Participant _participant;
         private readonly IBusControl _bus;
 
-        public ParticipantWorker(ILogger<ParticipantWorker> logger, Participant participant, IBusControl bus)
+        public ParticipantHostedService(ILogger<ParticipantHostedService> logger, Participant participant, IBusControl bus)
         {
             _logger = logger;
             _participant = participant;
