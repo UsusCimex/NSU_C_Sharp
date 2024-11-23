@@ -31,7 +31,6 @@ namespace HRManagerService
                     });
 
                     services.AddSingleton<Services.HRManagerService>();
-                    services.AddHostedService<Workers.HRManagerWorker>();
                 })
                 .Build()
                 .Run();
