@@ -6,8 +6,8 @@ namespace HRManagerService.Utilities
     {
         public static List<Team> BuildTeams(int hackathonId, List<Employee> teamLeads, List<Employee> juniors, List<Wishlist> wishlists)
         {
-            // Простая стратегия: случайное сочетание TeamLead и Junior
-            var random = new System.Random();
+            // Cлучайное сочетание TeamLead и Junior
+            var random = new Random();
             var shuffledTeamLeads = teamLeads.OrderBy(x => random.Next()).ToList();
             var shuffledJuniors = juniors.OrderBy(x => random.Next()).ToList();
 

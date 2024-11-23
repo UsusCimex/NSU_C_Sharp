@@ -53,7 +53,6 @@ namespace HRManagerService.Services
         {
             var wishlists = _wishlistsPerHackathon[hackathonId];
 
-            // Здесь используйте вашу стратегию формирования команд
             var teams = TeamBuilder.BuildTeams(hackathonId, _teamLeads, _juniors, wishlists);
 
             var hrManagerData = new HRManagerData
