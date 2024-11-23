@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MassTransit;
 using Shared.Models;
 
-namespace ParticipantService.Workers
+namespace ParticipantService.HostedServices
 {
     public class ParticipantHostedService : BackgroundService
     {

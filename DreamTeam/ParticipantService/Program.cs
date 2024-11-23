@@ -35,7 +35,7 @@ namespace ParticipantService
                     });
 
                     services.AddSingleton(new Shared.Models.Participant(participantId, participantName, participantRole));
-                    services.AddHostedService<Workers.ParticipantHostedService>();
+                    services.AddHostedService<HostedServices.ParticipantHostedService>();
                 })
                 .Build()
                 .Run();
